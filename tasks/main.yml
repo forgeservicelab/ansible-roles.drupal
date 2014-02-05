@@ -1,46 +1,23 @@
 ---
-- name: Install NFS client
+- name: Install required packages
   apt:
-    name=nfs-common
+    name={{ item }}
     state=present
+  with_items:
+    - nfs-common
+    - apache2
+    - libapache2-mod-php5
+    - php5-gd
+    - php5-mysql
+    - php-cas
+    - php5-ldap
 
-- name: Install Apache server
-  apt:
-    name=apache2
-    state=present
-
-- name: Install Apache PHP mod
-  apt:
-    name=libapache2-mod-php5
-    state=present
-
-- name: Install PHP gd library
-  apt:
-    name=php5-gd
-    state=present
-
-- name: Install PHP mysql library
-  apt:
-    name=php5-mysql
-    state=present
-
-- name: Install PHP CAS library
-  apt:
-    name=php-cas
-    state=present
-
-- name: Install PHP LDAP library
-  apt:
-    name=php5-ldap
-    state=present
-
-- name: Enable Apache's mod rewrite
-  shell: a2enmod rewrite
+- name: Enable Apache modules
+  shell: a2enmod {{ item }}
   notify: restart apache
-
-- name: Enable Apache's SSL
-  shell: a2enmod ssl
-  notify: restart apache
+  with_items:
+    - rewrite
+    - ssl
 
 - name: Temporarily stop Apache for local configuration
   service:
@@ -48,52 +25,38 @@
     state=stopped
   notify: restart apache
 
-- name: umount the NFS share in case it's been corrupted by previous configuration
+- name: remount the NFS share in case it's been corrupted by previous configuration
   mount:
     name=/var/www
     src="{{ lookup('file','../../nfs/vars/float_ip') }}:/data/export"
     fstype=nfs
     opts="rw,vers=3"
-    state=unmounted
+    state={{ item }}
   notify: restart apache
-
-- name: mount the NFS share
-  mount:
-    name=/var/www
-    src="{{ lookup('file','../../nfs/vars/float_ip') }}:/data/export"
-    fstype=nfs
-    opts="rw,vers=3"
-    state=mounted
-  notify: restart apache
+  with_items:
+    - unmounted
+    - mounted
 
 - name: Create tls directory for apache
   file:
     path=/etc/apache2/tls
     state=directory
 
-- name: Upload certificate file
+- name: Upload ssl files
   copy:
-    src=../{{ certificate_path }}/{{ certificate_prefix }}.crt
-    dest=/etc/apache2/{{ certificate_path }}/{{ certificate_prefix }}.crt
+    src={{ certificate_prefix }}.{{ item.0 }}
+    dest=/etc/apache2/{{ certificate_path }}/{{ certificate_prefix }}.{{ item.0 }}
     owner=root
     group=root
-    mode=0644
-  notify:
-    - restart apache
-
-- name: Upload certificate key file
-  copy:
-    src=../{{ certificate_path }}/{{ certificate_prefix }}.key
-    dest=/etc/apache2/{{ certificate_path }}/{{ certificate_prefix }}.key
-    owner=root
-    group=root
-    mode=0600
-  notify:
-    - restart apache
+    mode={{ item.1 }}
+  notify: restart apache
+  with_together:
+    - [ crt, key ]
+    - [ 0644, 0600 ]
 
 - name: Configure Apache
   template:
-    src=../templates/apache.j2
+    src=apache.j2
     dest=/etc/apache2/sites-available/default
     owner=root
     group=root
