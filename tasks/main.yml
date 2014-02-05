@@ -84,7 +84,7 @@
   when: "primary is defined and not {{ item.stat.exists }}"
 
 - name: Unpack required modules
-  shell: tar xzf /tmp/{{ item.item.name}-{{ item.item.verrsion }}.tar.gz
+  shell: tar xzf /tmp/{{ item.item.name}-{{ item.item.version }}.tar.gz
     chdir=/var/www/sites/all/modules
     creates=/var/www/sites/all/modules/{{ item.item.name }}
   with_items:
