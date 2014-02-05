@@ -1,3 +1,11 @@
 ---
 certificate_path: tls
 certificate_prefix: forgeservicelab.fi
+modules:
+  - { name: 'cas', version: "{{ cas_version }}" }
+  - { name: 'cas_attributes', version: "{{ cas_attributes_version }}" }
+  - { name: 'ldap', version: "{{ ldap_version }}" }
+  - { name: 'ctools', version: "{{ ctools_version }}" }
+  - { name: 'entity', version: "{{ entity_version }}" }
+  - { name: 'token', version: "{{ token_version }}" }
+  - { name: 'role_delegation', version: "{{ role_delegation_version }}" }
