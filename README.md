@@ -30,6 +30,7 @@ Role Variables
 - `entity_api_version` - Version of additional Entity API module, defaults to 7.x-1.3
 - `token_version` - Version of additional Token module, defaults to 7.x-1.5
 - `role_delegation_version` - Version of additional Role Delegation module, defaults to 7.x-1.1
+- `primary` - Flag that indicates the target host in which to run tasks that only need to be executed in one node. This is expected to be an inventory variable within the host group.
 
 Dependencies
 ------------
