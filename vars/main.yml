@@ -1,4 +1,5 @@
 ---
+NFS_VIRTUAL_IP:
 certificate_path: tls
 certificate_prefix: forgeservicelab.fi
 modules:

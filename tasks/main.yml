@@ -28,7 +28,7 @@
 - name: remount the NFS share in case it's been corrupted by previous configuration
   mount:
     name=/var/www
-    src="{{ lookup('file','../../nfs/vars/float_ip') }}:/data/export"
+    src="{{ NFS_VIRTUAL_IP }}:/data/export"
     fstype=nfs
     opts="rw,vers=3"
     state={{ item }}
