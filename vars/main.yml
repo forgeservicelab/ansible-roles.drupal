@@ -1,7 +1,6 @@
 ---
 NFS_VIRTUAL_IP:
-certificate_path: tls
-certificate_prefix: forgeservicelab.fi
+certificate_prefix:
 modules:
   - { name: 'cas', version: "{{ cas_version }}" }
   - { name: 'cas_attributes', version: "{{ cas_attributes_version }}" }

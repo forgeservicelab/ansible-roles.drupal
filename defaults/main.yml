@@ -1,8 +1,11 @@
 ---
+certificate_path: tls
+
 drupal_version: 7.26
 drupal_database: plaza
 drupal_username: drupalcore
 drupal_passwd: drupalpass
+
 cas_version: 7.x-1.3-rc1
 cas_attributes_version: 7.x-1.0-rc3
 ldap_version: 7.x-2.0-beta8
