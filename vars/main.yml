@@ -1,6 +1,7 @@
 ---
 NFS_VIRTUAL_IP:
 certificate_prefix:
+drupal_database:
 modules:
   - { name: 'cas', version: "{{ cas_version }}" }
   - { name: 'cas_attributes', version: "{{ cas_attributes_version }}" }
