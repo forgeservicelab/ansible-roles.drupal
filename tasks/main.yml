@@ -21,6 +21,7 @@
     login_password=""
     name=forgeweb
     encoding=utf8
+  when: "primary is defined"
 
 - name: Create drupal mysql user
   mysql_user:
@@ -31,6 +32,7 @@
     password=drupalpass
     host="{{ ROUTER_PUBLIC_IP }}"
     priv='forgeweb.*:SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES, CREATE TEMPORARY TABLES'
+  when: "primary is defined"
 
 - name: Enable Apache modules
   shell: a2enmod {{ item }}
