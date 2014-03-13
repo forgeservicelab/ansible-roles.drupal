@@ -96,6 +96,18 @@
   when: "primary is defined"
   tags:
     - redeploy
+
+- name: Ensure drupal ownership
+  file:
+    path=/var/www
+    owner=www-data
+    group=www-data
+    recurse=yes
+    state=directory
+  when: "primary is defined"
+  tags:
+    - redeploy
+
 #  shell: wget https://git.forgeservicelab.fi/druid/web/repository/archive -O drupal.tar.gz
 #    chdir=/tmp
 #    creates=/tmp/drupal.tar.gz
