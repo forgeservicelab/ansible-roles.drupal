@@ -30,7 +30,7 @@
     login_password=""
     name=drupalcore
     password=drupalpass
-    host="{{ ROUTER_PUBLIC_IP }}"
+    host="{{ ROUTER_PUBLIC_IP if IS_TARGET_OPENSTACK else ansible_default_ipv4.address }}"
     priv='forgeweb.*:SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES, CREATE TEMPORARY TABLES'
   when: "primary is defined"
 

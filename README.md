@@ -19,6 +19,7 @@ Role Variables
 - `MySQL_VIRTUAL_IP` - The IP of the MySQL server. Declared but undefined, it is expected to be defined on `vars/main.yml` or overriden on the global scope.
 - `ROUTER_PUBLIC_IP` - The IP of the public interface of the target network's router. Undefined, required only if the target environment is deployed on OpenStack.
 - `certificate_prefix` - The name of both SSL certificate files excluding `.crt` and `.key` respectively. Note that the module expects the certificate file to have a .crt extension, if your file has a .pem extension, please rename it. Declared but undefined, it is expected to be defined on `vars/main.yml` or overriden on the global scope.
+- `IS_TARGET_OPENSTACK` - Boolean defining whether the target environment is deployed on OpenStack. Expected to be declared on the global scope.
 - `certificate_path` - Path to the SSL certificates directory, relative to Apache's directory, defaults to `tls`.
 - `modules` - A list of drupal modules to install in addition to core modules. See `vars/main.yml` for more information.
 - `drupal_version` - Version of drupal to install, defaults to 7.26.
@@ -38,6 +39,10 @@ Dependencies
 ------------
 
 The [common role](https://git.forgeservicelab.fi/ansible-roles/common) is defined as a dependency, make sure it is present in your playbook.
+
+Variables read from other roles:
+
+- `IS_TARGET_OPENSTACK` - Expected to be declared on the global scope.
 
 Author Information
 ------------------
