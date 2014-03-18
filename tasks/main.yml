@@ -14,6 +14,14 @@
     - python-mysqldb
     - git
 
+- name: Wait for resources
+  wait_for:
+    host="{{ item.0 }}"
+    port="{{ item.1 }}"
+  with_together:
+    - [ "{{ MySQL_VIRTUAL_IP }}", "{{ NFS_VIRTUAL_IP }}" ]
+    - [ '3306', '111' ]
+
 - name: Create drupal mysql database
   mysql_db:
     login_host="{{ MySQL_VIRTUAL_IP }}"
