@@ -93,11 +93,6 @@
     mode=0644
   notify: restart apache
 
-#- name: Check whether drupal is already installed
-#  stat:
-#    path=/var/www/index.php
-#  register: drupal
-
 - name: Get drupal
   git:
     repo=https://git.forgeservicelab.fi/druid/web.git
@@ -117,56 +112,3 @@
   when: "primary is defined"
   tags:
     - redeploy
-
-#  shell: wget https://git.forgeservicelab.fi/druid/web/repository/archive -O drupal.tar.gz
-#    chdir=/tmp
-#    creates=/tmp/drupal.tar.gz
-#  when: "primary is defined and not drupal.stat.exists"
-
-#- name: Unpack drupal
-#  shell: tar xzf drupal.tar.gz
-#    chdir=/tmp
-#    creates=/tmp/web.git
-#  when: "primary is defined and not drupal.stat.exists"
-
-#- name: Move drupal to webserver root
-#  shell: mv web.git/* /var/www/
-#    chdir=/tmp
-#  when: "primary is defined and not drupal.stat.exists"
-#  notify: restart apache
-
-#- name: Move .htaccess
-#  shell: mv web.git/.htaccess /var/www/
-#    chdir=/tmp
-#  when: "primary is defined and not drupal.stat.exists"
-#  notify: restart apache
-
-#- name: Move .gitignore
-#  shell: mv web.git/.gitignore /var/www/
-#    chdir=/tmp
-#  ignore_errors: yes
-#  when: "primary is defined and not drupal.stat.exists"
-#  notify: restart apache
-
-#- name: Check whether the modules are already installed
-#  stat:
-#    path=/var/www/sites/all/modules/{{ item.name }}
-#  register: result
-#  with_items:
-#    - "{{ modules }}"
-
-#- name: Get required modules
-#  shell: wget http://ftp.drupal.org/files/projects/{{ item.item.name }}-{{ item.item.version }}.tar.gz
-#    chdir=/tmp
-#    creates=/tmp/{{ item.item.name }}-{{ item.item.version }}.tar.gz
-#  with_items:
-#    - "{{ result.results }}"
-#  when: "primary is defined and not {{ item.stat.exists }}"
-
-#- name: Unpack required modules
-#  shell: tar xzf /tmp/{{ item.item.name }}-{{ item.item.version }}.tar.gz
-#    chdir=/var/www/sites/all/modules
-#    creates=/var/www/sites/all/modules/{{ item.item.name }}
-#  with_items:
-#    - "{{ result.results }}"
-#  when: "primary is defined and not {{ item.stat.exists }}"

@@ -21,18 +21,9 @@ Role Variables
 - `certificate_prefix` - The name of both SSL certificate files excluding `.crt` and `.key` respectively. Note that the module expects the certificate file to have a .crt extension, if your file has a .pem extension, please rename it. Declared but undefined, it is expected to be defined on `vars/main.yml` or overriden on the global scope.
 - `IS_TARGET_OPENSTACK` - Boolean defining whether the target environment is deployed on OpenStack. Expected to be declared on the global scope.
 - `certificate_path` - Path to the SSL certificates directory, relative to Apache's directory, defaults to `tls`.
-- `modules` - A list of drupal modules to install in addition to core modules. See `vars/main.yml` for more information.
-- `drupal_version` - Version of drupal to install, defaults to 7.26.
 - `drupal_database` - The name of the database on the MySQL server for drupal to use. Declared but undefined, it is expected to be defined on `vars/main.yml` or overriden on the global scope.
 - `drupal_username` - MySQL user for drupal, defaults to `drupalcore`
 - `drupal_passwd` - MySQL password for the drupal user, defaults to `drupalpass`
-- `cas_version` - Version of additional CAS module, defaults to 7.x-1.3-rc1
-- `cas_attributes_version` - Version of additional CAS Attributes module, defaults to 7.x-1.0-rc3
-- `ldap_version` - Version of additional LDAP module, defaults to 7.x-2.0-beta8
-- `ctools_version` - Version of additional Chaos Tools module, defaults to 7.x-1.3
-- `entity_api_version` - Version of additional Entity API module, defaults to 7.x-1.3
-- `token_version` - Version of additional Token module, defaults to 7.x-1.5
-- `role_delegation_version` - Version of additional Role Delegation module, defaults to 7.x-1.1
 - `primary` - Flag that indicates the target host in which to run tasks that only need to be executed in one node. This is expected to be an inventory variable within the host group.
 
 Dependencies
