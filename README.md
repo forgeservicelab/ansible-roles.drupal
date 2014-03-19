@@ -10,7 +10,10 @@ This role is a client to a pre-existing NFS share and it does not set up a NFS s
 
 As per drupal's system requirements, a MySQL server with root access allowed from the provisioned instance is needed.
 
-Configured drupal webservers handle SSL negotiation, the SSL certificate and key files are expected under the `files` directory. Both files should share the name up until the extension.
+Configured drupal webservers handle SSL negotiation, the SSL certificate and key files are expected under the `files` directory. All files should share the name up until the extension. The expected files are:
+  - `{{ certificate_prefix }}.crt` - The server SSL certificate file.
+  - `{{ certificate_prefix }}.key` - The private key for the certificate.
+  - `{{ certificate_prefix }}.chain.pem` - The intermediate CA chain file.
 
 Role Variables
 --------------
