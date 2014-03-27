@@ -12,6 +12,7 @@
     - php-cas
     - php5-ldap
     - python-mysqldb
+    - pdftk
     - git
 
 - name: Wait for resources
