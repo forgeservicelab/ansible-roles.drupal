@@ -2,7 +2,7 @@
 - name: Install required packages
   apt:
     name={{ item }}
-    state=present
+    state=latest
   with_items:
     - nfs-common
     - apache2
@@ -10,6 +10,7 @@
     - php5-gd
     - php5-mysql
     - php-cas
+    - php-mail
     - php5-ldap
     - python-mysqldb
     - pdftk
