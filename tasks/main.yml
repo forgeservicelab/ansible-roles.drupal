@@ -10,11 +10,37 @@
     - php5-gd
     - php5-mysql
     - php-cas
-    - php-mail
     - php5-ldap
+    - php-mail
+    - exim4
     - python-mysqldb
     - pdftk
     - git
+
+- name: configure Exim4
+  lineinfile:
+    dest=/etc/exim4/update-exim4.conf.conf 
+    regexp="dc_eximconfig_configtype='.+?'"
+    line="dc_eximconfig_configtype='internet'"
+  notify: restart exim4
+
+- name: configure Exim4 mailname
+  lineinfile:
+    dest=/etc/mailname
+    line="{{ mailname }}"
+    create=yes
+    owner=root
+    group=root
+    mode=0644
+  notify: restart exim4
+
+- name: Configure NFS client
+  lineinfile:
+    dest=/etc/default/nfs-common
+    regexp="^STATDOPTS=(.*)(?<!(--port 4000 --outgoing-port 4002'))$"
+    line="STATDOPTS='\1 --port 4000 --outgoing-port 4002'"
+    backrefs=yes
+  notify: restart nfs-common
 
 - name: Wait for resources
   wait_for:
@@ -49,6 +75,7 @@
   with_items:
     - rewrite
     - ssl
+    - alias
 
 - name: Temporarily stop Apache for local configuration
   service:
@@ -91,6 +118,15 @@
     dest=/etc/apache2/sites-available/default
     owner=root
     group=root
+    mode=0644
+  notify: restart apache
+
+- name: Upload custom error pages
+  copy:
+    src=errors
+    dest=/etc/apache2/
+    owner=www-data
+    group=www-data
     mode=0644
   notify: restart apache
 

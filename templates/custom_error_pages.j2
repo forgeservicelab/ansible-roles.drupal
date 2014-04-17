@@ -1,0 +1,16 @@
+<IfModule mod_alias.c>
+	Alias /errors "/etc/apache2/errors"
+
+	<Directory "/etc/apache2/errors/">
+		AllowOverride None
+		Options IncludesNoExec
+		AddOutputFilter Includes html
+		AddHandler type-map var
+		Order allow,deny
+		Allow from all
+	</Directory>
+
+{% for file in error_pages.stdout_lines %}
+	ErrorDocument {{ file.split('.')[0] }} /errors/{{ file }}
+{% endfor %}
+</IfModule>
