@@ -130,6 +130,16 @@
     mode=0644
   notify: restart apache
 
+- name: Get list of error pages
+  shell: ls /etc/apache2/errors
+  register: error_pages
+
+- name: Configure custom error pages
+  template:
+    src=custom_error_pages.j2
+    dest=/etc/apache2/conf.d/custom-error-pages
+  notify: restart apache
+
 - name: Get drupal
   git:
     repo=https://git.forgeservicelab.fi/druid/web.git
