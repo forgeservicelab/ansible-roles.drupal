@@ -17,6 +17,24 @@
     - pdftk
     - git
 
+- name: get Nova name
+  action: nova_get_name
+  register: result
+  when: IS_TARGET_OPENSTACK
+
+- name: Allocate floating IP
+  quantum_floating_ip_associate:
+    auth_url="{{ OS_AUTH_URL }}"
+    instance_name="{{ result.name }}"
+    ip_address="{{ ALLOWED_IPS[groups[group_names[0]].index(inventory_hostname)] }}"
+    login_password="{{ OS_PASSWORD }}"
+    login_tenant_name="{{ OS_PROJECT }}"
+    login_username="{{ OS_USERNAME }}"
+    state=present
+  connection: local
+  sudo: false
+  when: IS_TARGET_OPENSTACK
+
 - name: configure Exim4
   lineinfile:
     dest=/etc/exim4/update-exim4.conf.conf 

@@ -1,0 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import requests
+import json
+
+print json.dumps({
+    "name" : json.loads(requests.get('http://169.254.169.254/openstack/latest/meta_data.json').text)['name']
+})
