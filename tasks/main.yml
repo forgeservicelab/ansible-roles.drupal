@@ -1,8 +1,8 @@
 ---
 - name: Install required packages
   apt:
-    name={{ item }}
-    state=latest
+    name: "{{ item }}"
+    state: latest
   with_items:
     - nfs-common
     - apache2
@@ -24,68 +24,68 @@
 
 - name: Allocate floating IP
   quantum_floating_ip_associate:
-    auth_url="{{ OS_AUTH_URL }}"
-    instance_name="{{ result.name }}"
-    ip_address="{{ ALLOWED_IPS[groups[group_names[0]].index(inventory_hostname)] }}"
-    login_password="{{ OS_PASSWORD }}"
-    login_tenant_name="{{ OS_PROJECT }}"
-    login_username="{{ OS_USERNAME }}"
-    state=present
+    auth_url: "{{ OS_AUTH_URL }}"
+    instance_name: "{{ result.name }}"
+    ip_address: "{{ ALLOWED_IPS[groups[group_names[0]].index(inventory_hostname)] }}"
+    login_password: "{{ OS_PASSWORD }}"
+    login_tenant_name: "{{ OS_PROJECT }}"
+    login_username: "{{ OS_USERNAME }}"
+    state: present
   connection: local
   sudo: false
   when: IS_TARGET_OPENSTACK
 
 - name: configure Exim4
   lineinfile:
-    dest=/etc/exim4/update-exim4.conf.conf 
-    regexp="dc_eximconfig_configtype='.+?'"
-    line="dc_eximconfig_configtype='internet'"
+    dest: /etc/exim4/update-exim4.conf.conf 
+    regexp: "dc_eximconfig_configtype='.+?'"
+    line: "dc_eximconfig_configtype='internet'"
   notify: restart exim4
 
 - name: configure Exim4 mailname
   lineinfile:
-    dest=/etc/mailname
-    line="{{ mailname }}"
-    create=yes
-    owner=root
-    group=root
-    mode=0644
+    dest: /etc/mailname
+    line: "{{ mailname }}"
+    create: yes
+    owner: root
+    group: root
+    mode: 0644
   notify: restart exim4
 
 - name: Configure NFS client
   lineinfile:
-    dest=/etc/default/nfs-common
-    regexp="^STATDOPTS=(.*)(?<!(--port 4000 --outgoing-port 4002'))$"
-    line="STATDOPTS='\1 --port 4000 --outgoing-port 4002'"
-    backrefs=yes
+    dest: /etc/default/nfs-common
+    regexp: "^STATDOPTS=(.*)(?<!(--port 4000 --outgoing-port 4002'))$"
+    line: "STATDOPTS='\1 --port 4000 --outgoing-port 4002'"
+    backrefs: yes
   notify: restart nfs-common
 
 - name: Wait for resources
   wait_for:
-    host="{{ item.0 }}"
-    port="{{ item.1 }}"
+    host: "{{ item.0 }}"
+    port: "{{ item.1 }}"
   with_together:
     - [ "{{ MySQL_VIRTUAL_IP }}", "{{ NFS_VIRTUAL_IP }}" ]
     - [ '3306', '111' ]
 
 - name: Create drupal mysql database
   mysql_db:
-    login_host="{{ MySQL_VIRTUAL_IP }}"
-    login_user=root
-    login_password=""
-    name={{ drupal_database }}
-    encoding=utf8
+    login_host: "{{ MySQL_VIRTUAL_IP }}"
+    login_user: root
+    login_password: ""
+    name: "{{ drupal_database }}"
+    encoding: utf8
   when: "primary is defined"
 
 - name: Create drupal mysql user
   mysql_user:
-    login_host="{{ MySQL_VIRTUAL_IP }}"
-    login_user=root
-    login_password=""
-    name=drupalcore
-    password=drupalpass
-    host="{{ ALLOWED_IPS[groups[group_names[0]].index(inventory_hostname)] if IS_TARGET_OPENSTACK else ansible_default_ipv4.address }}"
-    priv='{{ drupal_database }}.*:SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES, CREATE TEMPORARY TABLES'
+    login_host: "{{ MySQL_VIRTUAL_IP }}"
+    login_user: root
+    login_password: ""
+    name: drupalcore
+    password: drupalpass
+    host: "{{ ALLOWED_IPS[groups[group_names[0]].index(inventory_hostname)] if IS_TARGET_OPENSTACK else ansible_default_ipv4.address }}"
+    priv: '{{ drupal_database }}.*:SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES, CREATE TEMPORARY TABLES'
 
 - name: Enable Apache modules
   shell: a2enmod {{ item }}
@@ -97,17 +97,17 @@
 
 - name: Temporarily stop Apache for local configuration
   service:
-    name=apache2
-    state=stopped
+    name: apache2
+    state: stopped
   notify: restart apache
 
 - name: remount the NFS share in case it hass been corrupted by previous configuration
   mount:
-    name=/var/www
-    src="{{ NFS_VIRTUAL_IP }}:/data/export"
-    fstype=nfs
-    opts="rw,vers=3"
-    state={{ item }}
+    name: /var/www
+    src: "{{ NFS_VIRTUAL_IP }}:/data/export"
+    fstype: nfs
+    opts: "rw,vers=3"
+    state: "{{ item }}"
   notify: restart apache
   with_items:
     - unmounted
@@ -115,16 +115,16 @@
 
 - name: Create tls directory for apache
   file:
-    path=/etc/apache2/{{ certificate_path }}
-    state=directory
+    path: /etc/apache2/{{ certificate_path }}
+    state: directory
 
 - name: Upload ssl files
   copy:
-    src={{ certificate_prefix }}.{{ item.0 }}
-    dest=/etc/apache2/{{ certificate_path }}/{{ certificate_prefix }}.{{ item.0 }}
-    owner=root
-    group=root
-    mode={{ item.1 }}
+    src: "{{ certificate_prefix }}.{{ item.0 }}"
+    dest: "/etc/apache2/{{ certificate_path }}/{{ certificate_prefix }}.{{ item.0 }}"
+    owner: root
+    group: root
+    mode: "{{ item.1 }}"
   notify: restart apache
   with_together:
     - [ crt, chain.pem, key ]
@@ -132,20 +132,20 @@
 
 - name: Configure Apache
   template:
-    src=apache.j2
-    dest=/etc/apache2/sites-available/default
-    owner=root
-    group=root
-    mode=0644
+    src: apache.j2
+    dest: /etc/apache2/sites-available/default
+    owner: root
+    group: root
+    mode: 0644
   notify: restart apache
 
 - name: Upload custom error pages
   copy:
-    src=errors
-    dest=/etc/apache2/
-    owner=www-data
-    group=www-data
-    mode=0644
+    src: errors
+    dest: /etc/apache2/
+    owner: www-data
+    group: www-data
+    mode: 0644
   notify: restart apache
 
 - name: Get list of error pages
@@ -154,8 +154,8 @@
 
 - name: Configure custom error pages
   template:
-    src=custom_error_pages.j2
-    dest=/etc/apache2/conf.d/custom-error-pages
+    src: custom_error_pages.j2
+    dest: /etc/apache2/conf.d/custom-error-pages
   notify: restart apache
 
 - name: Temporarily set ansible user as owner of /var/www
@@ -179,11 +179,11 @@
 
 - name: Ensure drupal ownership
   file:
-    path=/var/www
-    owner=www-data
-    group=www-data
-    recurse=yes
-    state=directory
+    path: /var/www
+    owner: www-data
+    group: www-data
+    recurse: yes
+    state: directory
   when: "primary is defined"
   tags:
     - redeploy
