@@ -84,7 +84,7 @@
     login_password=""
     name=drupalcore
     password=drupalpass
-    host="{{ ROUTER_PUBLIC_IP if IS_TARGET_OPENSTACK else ansible_default_ipv4.address }}"
+    host="{{ ALLOWED_IPS[groups[group_names[0]].index(inventory_hostname)] if IS_TARGET_OPENSTACK else ansible_default_ipv4.address }}"
     priv='{{ drupal_database }}.*:SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES, CREATE TEMPORARY TABLES'
 
 - name: Enable Apache modules
@@ -158,11 +158,21 @@
     dest=/etc/apache2/conf.d/custom-error-pages
   notify: restart apache
 
+- name: Temporarily set ansible user as owner of /var/www
+  file:
+    path: /var/www
+    owner: "{{ ansible_ssh_user }}"
+  when: "primary is defined"
+  tags:
+    - redeploy
+
 - name: Get drupal
   git:
-    repo=https://git.forgeservicelab.fi/druid/web.git
-    dest=/var/www
-    force=no
+    repo: ssh://gitlab@git.forgeservicelab.fi:10022/druid/web.git
+    dest: /var/www/
+    ssh_opts: -o StrictHostKeyChecking=no
+    force: no
+  sudo: false
   when: "primary is defined"
   tags:
     - redeploy
