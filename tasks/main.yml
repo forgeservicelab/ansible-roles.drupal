@@ -162,6 +162,8 @@
   file:
     path: /var/www
     owner: "{{ ansible_ssh_user }}"
+    recurse: yes
+    state: directory
   when: "primary is defined"
   tags:
     - redeploy
