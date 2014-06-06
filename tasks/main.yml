@@ -55,8 +55,8 @@
 - name: Configure NFS client
   lineinfile:
     dest: /etc/default/nfs-common
-    regexp: "^STATDOPTS=(.*)(?<!(--port 4000 --outgoing-port 4002'))$"
-    line: "STATDOPTS='\1 --port 4000 --outgoing-port 4002'"
+    regexp: ^STATDOPTS=(.*)(?<!(--port 4000 --outgoing-port 4002'))$
+    line: STATDOPTS='\1 --port 4000 --outgoing-port 4002'
     backrefs: yes
   notify: restart nfs-common
 
@@ -173,7 +173,9 @@
     repo: ssh://gitlab@git.forgeservicelab.fi:10022/druid/web.git
     dest: /var/www/
     ssh_opts: -o StrictHostKeyChecking=no
+    accept_hostkey: true
     force: no
+    version: "{{ drupal_revision }}"
   sudo: false
   when: "primary is defined"
   tags:
