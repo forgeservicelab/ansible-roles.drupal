@@ -7,7 +7,6 @@ drupal_revision: HEAD
 
 NFS_VIRTUAL_IP:
 MySQL_VIRTUAL_IP:
-ROUTER_PUBLIC_IP:
 certificate_prefix:
 drupal_database:
 mailname:
