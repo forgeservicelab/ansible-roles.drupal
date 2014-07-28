@@ -93,6 +93,7 @@
   with_items:
     - rewrite
     - ssl
+    - headers
     - alias
 
 - name: Temporarily stop Apache for local configuration
