@@ -12,6 +12,7 @@
     - php-cas
     - php5-ldap
     - php-mail
+    - php-pear
     - exim4
     - python-mysqldb
     - pdftk
@@ -190,5 +191,14 @@
     recurse: yes
     state: directory
   when: "primary is defined"
+  tags:
+    - redeploy
+
+- name: Flush drupal caches and revert features
+  command: "{{ item }}"
+  with_items:
+    - drush cc all
+    - drush features-revert-all
+    - drush cc all
   tags:
     - redeploy
