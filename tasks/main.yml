@@ -198,7 +198,7 @@
   command: "{{ item }}"
   with_items:
     - drush cc all
-    - drush features-revert-all
+    - drush -y features-revert-all
     - drush cc all
   tags:
     - redeploy
