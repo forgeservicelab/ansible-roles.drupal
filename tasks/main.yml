@@ -12,6 +12,7 @@
     - php-cas
     - php5-ldap
     - php-mail
+    - php5-mcrypt
     - php-pear
     - exim4
     - python-mysqldb
