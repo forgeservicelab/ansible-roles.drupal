@@ -14,6 +14,7 @@
     - php-mail
     - php5-mcrypt
     - php-pear
+    - php5-xcache
     - exim4
     - python-mysqldb
     - pdftk
