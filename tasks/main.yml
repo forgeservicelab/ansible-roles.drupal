@@ -162,16 +162,6 @@
     dest: /etc/apache2/conf.d/custom-error-pages
   notify: restart apache
 
-- name: Temporarily set ansible user as owner of /var/www
-  file:
-    path: /var/www
-    owner: "{{ ansible_ssh_user }}"
-    recurse: yes
-    state: directory
-  when: "primary is defined"
-  tags:
-    - redeploy
-
 - name: Get drupal
   git:
     repo: ssh://gitlab@git.forgeservicelab.fi:10022/druid/web.git
@@ -180,18 +170,7 @@
     accept_hostkey: true
     force: no
     version: "{{ drupal_revision }}"
-  sudo: false
-  when: "primary is defined"
-  tags:
-    - redeploy
-
-- name: Ensure drupal ownership
-  file:
-    path: /var/www
-    owner: www-data
-    group: www-data
-    recurse: yes
-    state: directory
+  sudo_user: www-data
   when: "primary is defined"
   tags:
     - redeploy
