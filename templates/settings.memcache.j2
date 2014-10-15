@@ -1,0 +1,18 @@
+$conf['cache_backends'][] =  'sites/all/modules/contrib/memcache/memcache.inc';
+$conf['cache_default_class'] = 'MemCacheDrupal';
+$conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
+$conf['memcache_key_prefix'] = 'forge';
+//$conf['session_inc'] =  './sites/all/modules/memcache/memcache-session.inc';
+$conf['memcache_servers'] = array(
+  {% for IP in ALLOWED_IPS %}
+  '{{ IP }}:11211' => 'default',
+  {% endfor %}
+  //'localhost:11212' => 'session',
+  //'localhost:11213' => 'users',
+);
+// Where to direct memcache calls
+$conf['memcache_bins'] = array(
+  'cache' => 'default',
+  //'session' => 'session',
+  //'users' => 'users',
+);
