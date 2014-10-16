@@ -1,18 +1,39 @@
+<?php
 $conf['cache_backends'][] =  'sites/all/modules/contrib/memcache/memcache.inc';
 $conf['cache_default_class'] = 'MemCacheDrupal';
 $conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
 $conf['memcache_key_prefix'] = 'forge';
-//$conf['session_inc'] =  './sites/all/modules/memcache/memcache-session.inc';
+//$conf['session_inc'] =  './sites/all/modules/contrib/memcache/unstable/memcache-session.inc';
 $conf['memcache_servers'] = array(
-  {% for IP in ALLOWED_IPS %}
+{% for IP in ALLOWED_IPS %}
   '{{ IP }}:11211' => 'default',
-  {% endfor %}
-  //'localhost:11212' => 'session',
-  //'localhost:11213' => 'users',
+{% endfor %}
+  //'hostname:11212' => 'session',
+  //'hostname:11213' => 'users',
 );
 // Where to direct memcache calls
 $conf['memcache_bins'] = array(
-  'cache' => 'default',
+  'cache_performance'     =>  'default', // performance_logging module
+  'cache'                 =>  'default',
+  'cache_admin_menu'      =>  'default',
+  'cache_apachesolr'      =>  'default',
+  'cache_block'           =>  'default',
+  'cache_bml'             =>  'default',
+  'cache_bootstrap'       =>  'default',
+  'cache_field'           =>  'default',
+  'cache_filter'          =>  'default',
+//  'cache_form'            =>  'default',  // This cache bin should not be assigned to volatile storage
+  'cache_image'           =>  'default',
+  'cache_libraries'       =>  'default',
+  'cache_mailchimp_user'  =>  'default',
+  'cache_menu'            =>  'default',
+  'cache_page'            =>  'default',
+  'cache_path'            =>  'default',
+  'cache_rules'           =>  'default',
+  'cache_token'           =>  'default',
+  'cache_update'          =>  'default',
+  'cache_views'           =>  'default',
+  'cache_views_data'      =>  'default',
   //'session' => 'session',
   //'users' => 'users',
 );
