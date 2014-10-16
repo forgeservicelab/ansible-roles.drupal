@@ -7,9 +7,9 @@ $conf['memcache_key_prefix'] = 'forge';
 $conf['memcache_servers'] = array(
 {% for IP in ALLOWED_IPS %}
   '{{ IP }}:11211' => 'default',
+  //'{{ IP }}:11221' => 'session',
+  //'{{ IP }}:11222' => 'users',
 {% endfor %}
-  //'hostname:11212' => 'session',
-  //'hostname:11213' => 'users',
 );
 // Where to direct memcache calls
 $conf['memcache_bins'] = array(
