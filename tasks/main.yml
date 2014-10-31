@@ -194,7 +194,21 @@
   command: "{{ item }}"
   with_items:
     - drush cc all
+    - drush updatedb
     - drush -y features-revert-all
+    - drush search-api-index
+    - drush -y @sites cron
     - drush cc all
+  when: "primary is defined"
+  tags:
+    - redeploy
+
+- name: Set up the drupal cron jobs
+  cron:
+    name: Trigger drupal cron hooks
+    minute: H/15
+    job: drush -y --root=/var/www @sites cron
+    user: www-data
+  when: "primary is defined"
   tags:
     - redeploy
