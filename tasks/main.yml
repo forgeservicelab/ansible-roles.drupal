@@ -206,7 +206,7 @@
 - name: Set up the drupal cron jobs
   cron:
     name: Trigger drupal cron hooks
-    minute: */15
+    minute: '*/15'
     job: drush -y --root=/var/www @sites cron
     user: www-data
   when: "primary is defined"
