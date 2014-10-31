@@ -194,7 +194,10 @@
   command: "{{ item }}"
   with_items:
     - drush cc all
+    - drush updatedb
     - drush -y features-revert-all
+    - drush search-api-index
+    - drush -y @sites cron
     - drush cc all
   tags:
     - redeploy
