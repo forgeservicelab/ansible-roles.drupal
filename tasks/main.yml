@@ -183,12 +183,17 @@
     group: www-data
   notify: restart apache
 
-- name: Enable memcached settings
+- name: Enable cache settings
   lineinfile:
     dest: /var/www/sites/default/settings.php
-    line: require 'settings.memcache.php';
+    line: "{{ item }}"
     insertafter: EOF
   notify: restart apache
+  with_items:
+    - "require 'settings.memcache.php';"
+    - "$conf['cache_backends'][] = 'sites/all/modules/authcache/authcache.cache.inc';"
+    - "$conf['cache_backends'][] = 'sites/all/modules/authcache/modules/authcache_builtin/authcache_builtin.cache.inc';"
+
 
 - name: Flush drupal caches and revert features
   command: "{{ item }}"
