@@ -40,7 +40,7 @@
 
 - name: configure Exim4
   lineinfile:
-    dest: /etc/exim4/update-exim4.conf.conf 
+    dest: /etc/exim4/update-exim4.conf.conf
     regexp: "dc_eximconfig_configtype='.+?'"
     line: "dc_eximconfig_configtype='internet'"
   notify: restart exim4
@@ -201,6 +201,7 @@
     - drush cc all
     - drush updatedb
     - drush -y features-revert-all
+    - drush search-api-clear
     - drush search-api-index
     - drush -y @sites cron
     - drush cc all
