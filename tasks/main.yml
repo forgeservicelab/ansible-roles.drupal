@@ -25,19 +25,6 @@
   register: result
   when: IS_TARGET_OPENSTACK
 
-- name: Allocate floating IP
-  quantum_floating_ip_associate:
-    auth_url: "{{ OS_AUTH_URL }}"
-    instance_name: "{{ result.name }}"
-    ip_address: "{{ ALLOWED_IPS[groups[group_names[0]].index(inventory_hostname)] }}"
-    login_password: "{{ OS_PASSWORD }}"
-    login_tenant_name: "{{ OS_PROJECT }}"
-    login_username: "{{ OS_USERNAME }}"
-    state: present
-  connection: local
-  sudo: false
-  when: IS_TARGET_OPENSTACK
-
 - name: configure Exim4
   lineinfile:
     dest: /etc/exim4/update-exim4.conf.conf
@@ -88,7 +75,7 @@
     name: drupalcore
     password: drupalpass
     host: "{{ ALLOWED_IPS[groups[group_names[0]].index(inventory_hostname)] if IS_TARGET_OPENSTACK else ansible_default_ipv4.address }}"
-    priv: '{{ drupal_database }}.*:SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES, CREATE TEMPORARY TABLES'
+    priv: '{{ drupal_database }}.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER,LOCK TABLES,CREATE TEMPORARY TABLES'
 
 - name: Enable Apache modules
   shell: a2enmod {{ item }}
@@ -162,6 +149,15 @@
     dest: /etc/apache2/conf.d/custom-error-pages
   notify: restart apache
 
+- name: Enable SSH_AUTH_SOCK on sudo calls
+  copy:
+    src: ssh_auth_sock
+    dest: /etc/sudoers.d/ssh_auth_sock
+    validate: 'visudo -cf %s'
+    owner: root
+    group: root
+    mode: 0440
+
 - name: Get drupal
   git:
     repo: ssh://gitlab@git.forgeservicelab.fi:10022/druid/web.git
@@ -170,10 +166,17 @@
     accept_hostkey: true
     force: no
     version: "{{ drupal_revision }}"
-  sudo_user: www-data
   when: "primary is defined"
   tags:
     - redeploy
+
+- name: Ensure drupal ownership
+  file:
+    path: /var/www
+    owner: www-data
+    group: www-data
+    recurse: yes
+    state: directory
 
 - name: Upload memcached settings file
   template:
@@ -182,6 +185,13 @@
     owner: www-data
     group: www-data
   notify: restart apache
+
+- name: Check for settings.php
+  stat:
+    path: /var/www/sites/default/settings.php
+  register: settings"
+  tags:
+    - redeploy
 
 - name: Enable cache settings
   lineinfile:
@@ -193,7 +203,9 @@
     - "require 'settings.memcache.php';"
     - "$conf['cache_backends'][] = 'sites/all/modules/authcache/authcache.cache.inc';"
     - "$conf['cache_backends'][] = 'sites/all/modules/authcache/modules/authcache_builtin/authcache_builtin.cache.inc';"
-
+  when: settings.stat.exists"
+  tags:
+    - redeploy
 
 - name: Flush drupal caches and revert features
   command: "{{ item }}"
@@ -205,7 +217,7 @@
     - drush search-api-index
     - drush -y @sites cron
     - drush cc all
-  when: "primary is defined"
+  when: "primary is defined and settings.stat.exists"
   tags:
     - redeploy
 
