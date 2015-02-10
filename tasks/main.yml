@@ -203,7 +203,7 @@
     - "require 'settings.memcache.php';"
     - "$conf['cache_backends'][] = 'sites/all/modules/authcache/authcache.cache.inc';"
     - "$conf['cache_backends'][] = 'sites/all/modules/authcache/modules/authcache_builtin/authcache_builtin.cache.inc';"
-  when: settings.stat.exists"
+  when: settings.stat.exists
   tags:
     - redeploy
 
