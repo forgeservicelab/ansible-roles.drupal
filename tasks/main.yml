@@ -189,7 +189,7 @@
 - name: Check for settings.php
   stat:
     path: /var/www/sites/default/settings.php
-  register: settings"
+  register: settings
   tags:
     - redeploy
 
