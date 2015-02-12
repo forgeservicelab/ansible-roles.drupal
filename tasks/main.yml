@@ -211,7 +211,7 @@
   command: "{{ item }}"
   with_items:
     - drush cc all
-    - drush updatedb
+    - drush -y updatedb
     - drush -y features-revert-all
     - drush search-api-clear
     - drush search-api-index
