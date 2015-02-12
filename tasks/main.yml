@@ -177,6 +177,8 @@
     group: www-data
     recurse: yes
     state: directory
+  tags:
+    - redeploy
 
 - name: Upload memcached settings file
   template:
