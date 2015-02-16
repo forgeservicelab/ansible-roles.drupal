@@ -157,6 +157,8 @@
     owner: root
     group: root
     mode: 0440
+  tags:
+    - redeploy
 
 - name: Get drupal
   git:
