@@ -164,7 +164,7 @@
   git:
     repo: ssh://gitlab@git.forgeservicelab.fi:10022/druid/web.git
     dest: /var/www/
-    ssh_opts: -o StrictHostKeyChecking=no
+    ssh_opts: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
     accept_hostkey: true
     force: no
     version: "{{ drupal_revision }}"
