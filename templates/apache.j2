@@ -1,0 +1,62 @@
+<VirtualHost *:443>
+	ServerName {{ web_domain }}
+	ServerAdmin webmaster@localhost
+
+	DocumentRoot /var/www
+	AccessFileName .htaccess
+
+	RewriteEngine on
+	RewriteCond %{HTTP_HOST} !^{{ web_domain }} [NC]
+	RewriteRule ^/?(.*)$ https://{{ web_domain }}/$1 [L,R=301]
+
+	<IfModule mod_headers.c>
+    Header always set Strict-Transport-Security "max-age=31536000"
+        Header always set Public-Key-Pins "pin-sha256=\"<PUT YOUR HPKP PIN1 HERE>"; pin-sha256=\"<PUT YOUR HPKP PIN2 HERE>"; max-age=2592000"
+  </IfModule>
+
+	<Directory /var/www/>
+		Options Indexes FollowSymLinks
+		AllowOverride All
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+	<Directory "/usr/lib/cgi-bin">
+		AllowOverride None
+		Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		Order allow,deny
+		Allow from all
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+	SSLEngine on
+
+  SSLProtocol -ALL +TLSv1 +TLSv1.1 +TLSv1.2
+  SSLHonorCipherOrder On
+	SSLCipherSuite ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:!AES128
+	SSLCertificateFile {{ certificate_path }}/{{ certificate_prefix }}.crt
+	SSLCertificateChainFile {{ certificate_path }}/{{ certificate_prefix}}.chain.pem
+	SSLCertificateKeyFile {{ certificate_path }}/{{ certificate_prefix }}.key
+
+
+	<FilesMatch "\.(cgi|shtml|phtml|php)$">
+		SSLOptions +StdEnvVars
+	</FilesMatch>
+	<Directory /usr/lib/cgi-bin>
+		SSLOptions +StdEnvVars
+	</Directory>
+
+	BrowserMatch "MSIE [2-6]" \
+		nokeepalive ssl-unclean-shutdown \
+		downgrade-1.0 force-response-1.0
+	# MSIE 7 and newer should be able to use keepalive
+	BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+</VirtualHost>
